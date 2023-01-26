@@ -1,26 +1,26 @@
 import React, { useEffect } from "react";
-
-type InputProps {
-    inputID: string;
-    inputProcess: (value: string) => string;
+type inputProps = {
+    placeHolder: string;
+    processInput: (value: string) => string
 }
-export const Input: React.FC<InputProps> = ({inputID, inputProcess}) => {
-    let inputElement: HTMLElement | null
+export const Input: React.FC<inputProps> = ({placeHolder, processInput}) => {
+    let inputElement: HTMLInputElement | null
+    const [inputId] = React.useState(Math.round(Math.random() * 1000000) + '');
     const [message, setMessage] = React.useState('');
     function processGo(): void {
         setMessage('');
-        const messageRet: string = inputProcess(inputElement!.value);
-        if(messageRet == '') {
+        const messageRet: string = processInput(inputElement!.value) //why do we need to assign inputElement!.value to messageRet through processInput, and not like const messageRet: string = (inputElement!.value)
+        if (messageRet == '') {
             inputElement!.value = '';
         } else {
-            setMessage(messageRet);
+            setMessage(messageRet); //what the purpose of setMessage funct? Do we need it just to let the react know, that state is changed and need to do reassemble component?
         }
-    }
-    useEffect(() => {
-        inputElement = document.getElementById(inputID) as HTMLInputElement;
-    })
-    return <div>
-        <input id="inputID"/>
-        <button onClick={processGo}>GO</button>
-    </div>
+        useEffect(() => {
+            inputElement = document.getElementById(inputId) as HTMLInputElement;
+        })
+}
+return <div>
+    <input id={inputId} placeholder={placeHolder} style={{width: "60vw"}} />
+    <button onClick={processGo}>GO</button>
+</div>
 }
