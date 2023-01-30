@@ -29,6 +29,21 @@ export function getRandomMatrix(rows: number, columns: number, min: number,
     }
     return resMatrix;
 }
+
+export function getLifeMatrix(array: number [][]): number[][] {
+    for(let i = 0; i < array.length; i++) {
+        for(let j = 0; j < array[i].length; j++) {
+            if(array[i][j] !=1 && array[i][j+1] !=1 && array[i][j+2] != 1) {
+                array[i][j] = 0;
+            } else if(array[i][j] ==1 && array[i][j+1] ==1 && array[i][j+2] ==1 && array[i][j+3] == 1) {
+                array[i][j] = 0;
+            } else if(array[i][j] == 0 && array[i][j+1] ==1 && array[i][j+2] ==1 && array[i][j+3] == 1) {
+                array[i][j] = 1;
+            }
+        }
+    }
+    return array;
+}
 export function getRandomDate(minYear: number, maxYear: number): Date {
     const year = getRandomNumber(minYear, maxYear);
     const month = getRandomNumber(0, 12);
