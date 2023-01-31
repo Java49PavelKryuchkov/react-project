@@ -6,6 +6,8 @@ export class LifeMatrix {
         return this._numbers;
     }
     nextStep(): number[][] {
+        this._numbers = getRandomMatrix(this._numbers.length,
+            this._numbers[0].length, 0, 1);
         return getLifeMatrix(this._numbers);
     }
 }
