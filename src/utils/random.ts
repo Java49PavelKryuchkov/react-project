@@ -35,7 +35,7 @@ export function getRandomMatrix(rows: number, columns: number, min: number,
     return resMatrix;
 }
 export function fromAlive(value: number): number {
-    return (value === 2 || value === 2) ? live: dead;
+    return (value === 2 || value === 3) ? live: dead;
 }
 export function fromDead(value: number): number {
     return (value === 3) ? live : dead;
