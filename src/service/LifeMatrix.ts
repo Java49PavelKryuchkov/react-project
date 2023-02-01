@@ -1,4 +1,4 @@
-import { getLifeMatrix, getRandomMatrix } from "../utils/random";
+import {  getNextCellValue, getRandomMatrix } from "../utils/random";
 
 export class LifeMatrix {
     constructor(private _numbers: number[][]) {}
@@ -6,8 +6,9 @@ export class LifeMatrix {
         return this._numbers;
     }
     nextStep(): number[][] {
-        this._numbers = getRandomMatrix(this._numbers.length,
-            this._numbers[0].length, 0, 1);
-        return getLifeMatrix(this._numbers);
+        const nextMatrix: number[][] = this._numbers.map((row, i) =>row.map((col, j) => 
+        getNextCellValue(this._numbers, i, j)));
+        this._numbers = nextMatrix;
+        return this._numbers;
     }
 }

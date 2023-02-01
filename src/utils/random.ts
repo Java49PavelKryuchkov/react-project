@@ -1,3 +1,8 @@
+import { DefaultDeserializer } from "v8";
+
+const live: number = 1;
+const dead: number = 0;
+
 export function getRandomNumber(min: number, max: number,
      isMinInclusive: boolean = true, isMaxInclusive: boolean = false) {
         if (!isMinInclusive) {
@@ -29,21 +34,25 @@ export function getRandomMatrix(rows: number, columns: number, min: number,
     }
     return resMatrix;
 }
-
-export function getLifeMatrix(array: number [][]): number[][] {
-    for(let i = 0; i < array.length; i++) {
-        for(let j = 0; j < array[i].length; j++) {
-            if(array[i][j] !=1 && array[i][j+1] !=1 && array[i][j+2] != 1) {
-                array[i][j] = 0;
-            } else if(array[i][j] ==1 && array[i][j+1] ==1 && array[i][j+2] ==1 && array[i][j+3] == 1) {
-                array[i][j] = 0;
-            } else if(array[i][j] == 0 && array[i][j+1] ==1 && array[i][j+2] ==1 && array[i][j+3] == 1) {
-                array[i][j] = 1;
-            }
-        }
-    }
-    return array;
+export function fromAlive(value: number): number {
+    return (value === 2 || value === 2) ? live: dead;
 }
+export function fromDead(value: number): number {
+    return (value === 3) ? live : dead;
+}
+export function topBottomNeighbourCell(numbers: number[][], i: number, j: number): number {
+    return numbers[i] ? getCellValue(numbers[i][j-1]) + getCellValue(numbers[i][j+1]) + numbers[i][j] : dead;
+}
+export function getCellValue(cell: number | undefined): number {
+    return cell ? live : dead;
+}
+export function getNextCellValue(numbers: number[][], i: number, j: number): number {
+    const nNeighbourLives: number = getCellValue(numbers[i][j-1]) + getCellValue(numbers[i][j+1]) +
+    topBottomNeighbourCell(numbers, i-1, j) + topBottomNeighbourCell(numbers, i+1, j);
+    return numbers[i][j] ? fromAlive(nNeighbourLives) : fromDead(nNeighbourLives);
+}
+
+
 export function getRandomDate(minYear: number, maxYear: number): Date {
     const year = getRandomNumber(minYear, maxYear);
     const month = getRandomNumber(0, 12);
