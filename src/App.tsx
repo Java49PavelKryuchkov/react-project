@@ -8,16 +8,17 @@ import { Login } from './components/Login';
 import { Logout } from './components/Logout';
 
 function App() {
-  const auth: boolean = useSelector<any, any>(state => state.auth.authentificated);
+  const auth: string = useSelector<any, string>(state => state.auth.authentificated);
   const [operand, setOperand] = React.useState(1);
   const [factor, setFactor] = React.useState(10);
 
     return <div>
+      <p>{auth}</p>
       {auth && <div>
-      <Input placeHolder={'Enter operand'} inputProcess={function (value: string): string {
+      {auth.includes("admin") && <Input placeHolder={'Enter operand'} inputProcess={function (value: string): string {
           setOperand(+value);
           return '';
-        } }></Input>
+        } }></Input>}
         <Input placeHolder={'Enter factor'} inputProcess={function (value: string): string {
           setFactor(+value);
           return '';
