@@ -1,5 +1,7 @@
+import { Typography } from "@mui/material";
+import { fontSize } from "@mui/system";
 import React from "react";
 
 export const Customers: React.FC = () => {
-    return <h1>Customers</h1>
+    return <Typography sx={{fontSize: "2em"}}>Customers</Typography>
 }
