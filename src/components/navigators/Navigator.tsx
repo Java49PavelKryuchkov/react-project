@@ -1,10 +1,12 @@
-import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet, useNavigate } from "react-router-dom"
 import { NavigatorProps } from "../../models/NavigatorProps"
 import {Box, AppBar, Tabs, Tab, tabClasses} from "@mui/material"
-import React from "react"
+import React, { useEffect } from "react"
 
 export const Navigator: React.FC<NavigatorProps> = ({className, routes}) => {
     const [tabNumber, setTabNumber] = React.useState(0);
+    const navigate = useNavigate();
+    useEffect(() => navigate(routes[0].path), [])
     function changeNumber (event: any, number: number) {
         setTabNumber(number);
     }
