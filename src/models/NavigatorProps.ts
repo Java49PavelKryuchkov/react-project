@@ -1,4 +1,4 @@
+import { RoutesType } from "./RoutesType"
 export type NavigatorProps = {
-    className: string,
-    routes: {path: string, label: string}[]
+    routes: RoutesType[]
 }

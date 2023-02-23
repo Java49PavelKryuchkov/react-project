@@ -6,10 +6,9 @@ export class Company {
         this.employees.push(empl);
     }
     updateEmployee(empl: Employee): void {
-        const emplUpdated = this.getEmployee(empl.id);
-        if(emplUpdated != null) {
-            emplUpdated.department = empl.department;
-            emplUpdated.salary = empl.salary;
+        const index = this.employees.findIndex(el => el.id == empl.id);
+        if(index>=0) {
+            this.employees[index] = empl;
         }
     }
     getEmployee(id: number): Employee | null {
