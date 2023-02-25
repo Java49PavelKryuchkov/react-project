@@ -23,6 +23,9 @@ export const Employees: React.FC = () => {
     flex: 1, headerAlign: 'center', align: 'center'},
     {field: 'actions', type: 'actions', getActions: (params) => {
         return authUser.includes('admin') ? [
+            <GridActionsCellItem label="remove" icon={<Delete />}
+            onClick={() =>
+                dispatch(employeeActions.removeEmployee(+params.id))} />,
         <GridActionsCellItem label="update" icon={<Edit/>}
                 onClick={() =>
                    {

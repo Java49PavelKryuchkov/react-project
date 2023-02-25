@@ -8,7 +8,7 @@ export class Company {
     updateEmployee(empl: Employee): void {
         const index = this.employees.findIndex(el => el.id == empl.id);
         if(index>=0) {
-            this.employees[index] = empl;
+            this.employees[index] = empl;   
         }
     }
     getEmployee(id: number): Employee | null {
