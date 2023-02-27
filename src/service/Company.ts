@@ -1,8 +1,11 @@
 import { Employee } from "../models/Employee";
+import { getRandomNumber } from "../utils/random";
+import employeeConfig from '../config/employee-config.json'
 
 export class Company {
     private employees: Employee[] = [];
     addEmployee(empl: Employee): void {
+        empl.id = getRandomNumber(employeeConfig.minId, employeeConfig.maxId);
         this.employees.push(empl);
     }
     updateEmployee(empl: Employee): void {

@@ -10,7 +10,7 @@ export function createRandomEmployee(): Employee {
     const department = getElement(departments);
     const birthDate = getRandomDate(minBirthYear, maxBirthYear).toISOString().slice(0, 10);
     const salary = getRandomNumber(minSalary, maxSalary);
-    const employee = {id, name, birthDate, department, salary};
+    const employee = {id: 0, name, birthDate, department, salary};
     return employee;
 }
 export function ageStats(employees: Employee[]): {minAge:number, maxAge:number, avgAge: number} {

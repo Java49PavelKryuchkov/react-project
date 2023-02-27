@@ -12,6 +12,7 @@ import {RoutesType} from './models/RoutesType'
 import { useSelector } from 'react-redux';
 import { authReducer, authActions } from './redux/authSlice';
 import { NavigatorProps } from './models/NavigatorProps';
+import { Generation } from './components/pages/Generation';
 
 function App() {
   const [routes, setRoutes] = useState<RoutesType[]>([]);
@@ -32,6 +33,7 @@ function App() {
            routes={routes} />}>
           <Route index element={<Employees/>}/>
           <Route path='add' element={<AddEmployee/>}/>
+          <Route path='generation' element={<Generation/>}/>
           <Route path='statistics/age' element={<AgeStatistics/>}/>
           <Route path='statistics/salary' element={<SalaryStatistics/>}/>
           <Route path='/login' element={<Login/>} />
