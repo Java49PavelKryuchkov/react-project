@@ -1,14 +1,15 @@
 import React, { useState } from "react"
 import { Employee } from "../../models/Employee"
 import employeeConfig from '../../config/employee-config.json';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 type Props = {
     submitFn: (empl: Employee) => boolean,
     employeeUpdate?: Employee
 }
 const initialEmployee: Employee = {
-    id: 0, birthDate: '',
+    id: 0, 
+    birthDate: '',
     name: "",
     department: "",
     salary: 0
@@ -48,9 +49,11 @@ export const EmployeeForm: React.FC<Props> = ({submitFn, employeeUpdate}) => {
     function onResetFn(event: any) {
         setEmployee(employeeUpdate ? employeeUpdate : initialEmployee)
     }
-    return <Box>
+    return <Box sx={{ marginTop: { sm: "25vh" } }}>
         <form onSubmit={onSubmitFn} onReset={onResetFn}>
-        <FormControl fullWidth required>
+            <Grid container spacing={4} justifyContent='center'>
+                <Grid item xs={8} sm={5}>
+                <FormControl fullWidth required>
             <InputLabel id="select-department-id">Department</InputLabel>
             <Select labelId="select-department-id" label="Department"
             value={employee.department} onChange={handlerDepartment}>
@@ -58,13 +61,17 @@ export const EmployeeForm: React.FC<Props> = ({submitFn, employeeUpdate}) => {
                 {departments.map(dep => <MenuItem value={dep}>{dep}</MenuItem>)}
             </Select>
         </FormControl>
-        <TextField type='text' required fullWidth label="Employee name"
+                </Grid>
+                <Grid item xs={8} sm={5}>
+                <TextField type='text' required fullWidth label="Employee name"
         helperText='type employee name' value={employee.name} onChange={handlerName}
         inputProps = {{
             readOnly: !!employeeUpdate
 
         }}/>
-        <TextField type='date' required fullWidth label="birthDate"
+                </Grid>
+                <Grid item xs={8} sm={5}>
+                <TextField type='date' required fullWidth label="birthDate"
         value={employee.birthDate} onChange={handlerBirthDate}
         inputProps  = {{
             readOnly: !!employeeUpdate,
@@ -74,15 +81,27 @@ export const EmployeeForm: React.FC<Props> = ({submitFn, employeeUpdate}) => {
             shrink: true
         }}
          />
-         <TextField type='number' required fullWidth label='salary'
+                </Grid>
+                <Grid item xs={8} sm={5}>
+                <TextField type='number' required fullWidth label='salary'
          value={employee.salary} onChange={handlerSalary}
          helperText={`enter salary in range [${minSalary}-${maxSalary}]`}
               inputProps = {{
                 min: `${minSalary}`,
                 max: `${maxSalary}`
-              }}/>
-              <Button type='submit'>Submit</Button>
+              }}
+              InputLabelProps={{
+                shrink: !!employeeUpdate || !!employee.salary
+            }}
+              />
+                </Grid>
+            </Grid>
+
+        <Box sx={{ marginTop: { sm: "25vh" } }}>
+        <Button type='submit'>Submit</Button>
               <Button type='reset'>Reset</Button>
+        </Box>
+              
         </form>
     </Box>
 }
