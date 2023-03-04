@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { authReducer, authActions } from './redux/authSlice';
 import { NavigatorProps } from './models/NavigatorProps';
 import { Generation } from './components/pages/Generation';
+import { NavigatorDispatch } from './components/navigators/NavigatorDispatch';
 
 function App() {
   const [routes, setRoutes] = useState<RoutesType[]>([]);
@@ -29,7 +30,7 @@ function App() {
   }, [authUser])
   return <BrowserRouter>
   <Routes>
-  <Route path='/' element={<Navigator 
+  <Route path='/' element={<NavigatorDispatch 
            routes={routes} />}>
           <Route index element={<Employees/>}/>
           <Route path='add' element={<AddEmployee/>}/>
