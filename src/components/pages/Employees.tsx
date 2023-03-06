@@ -62,14 +62,14 @@ export const Employees: React.FC = () => {
     function actualRemove(isOk: boolean) {
         if(isOk) {
             dispatch(employeeActions.removeEmployee(idRemoved.current));
-            setOpen(false);
         }
+        setOpen(false);
     }
     function actualUpdate(isOk: boolean) {
         if (isOk) {
             dispatch(employeeActions.removeEmployee(employeeUpdate.current))
-            setOpen(false);
         }
+        setOpen(false);
     }
     function getComponent(): ReactNode {
         let res: ReactNode = <Box sx={{ height: "70vh", width: "80vw" }}>
