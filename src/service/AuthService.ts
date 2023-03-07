@@ -2,7 +2,7 @@ import { LoginData } from "../models/LoginData";
 
 export class AuthService {
     private users: LoginData[] = [
-        {username: 'pavel@pavel.com', password: '1234'},
+        {username: 'pavel_admin@pavel.com', password: '1234'},
         {username: 'oksana@oksana.com', password: '1234'}
     ];
     login(login: LoginData) {
