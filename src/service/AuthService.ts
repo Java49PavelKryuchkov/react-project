@@ -8,6 +8,6 @@ export class AuthService {
     login(login: LoginData) {
         const match = this.users.find(el => el.password == login.password && el.username == login.username);
         if(!match) 
-        {throw new Error ("This user don't exists")}
+        {throw "This user don't exists"}
     }
 }

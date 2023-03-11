@@ -10,11 +10,19 @@ import { Input } from "./Input";
 
 const auth = new AuthService;
 export const Login: React.FC = () => {
+    let message: string = '';
     const dispatch = useDispatch();
-    return <Box>
-        <LoginForm submitFn={function (user: LoginData): void {
+    function loginSubmit (user: LoginData): string {
+        try {
             auth.login(user);
             dispatch(authActions.login(user.username))
-        } } />
+        }
+        catch(e: any) {
+            message = e
+        }
+        return message;
+    } 
+    return <Box>
+        <LoginForm submitFn={loginSubmit} />
         </Box>
 }
