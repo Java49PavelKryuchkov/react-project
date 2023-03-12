@@ -9,40 +9,47 @@ import { layoutConfig } from './config/layout-config';
 import { Login } from './components/pages/Login';
 import { Logout } from './components/pages/Logout';
 import {RoutesType} from './models/RoutesType'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authReducer, authActions } from './redux/authSlice';
 import { NavigatorProps } from './models/NavigatorProps';
 import { Generation } from './components/pages/Generation';
 import { NavigatorDispatch } from './components/navigators/NavigatorDispatch';
+import { employeesActions } from './redux/employeesSlice';
 
 function App() {
+  const dispatch = useDispatch<any>();
   const [routes, setRoutes] = useState<RoutesType[]>([]);
-  const authUser: string = useSelector<any, string>(state => state.auth.authenticated);
+  const authUser:string = useSelector<any,string>(state=>state.auth.authenticated );
+  useEffect(()=> {
+      function getRoutes(): RoutesType[] {
+          const logoutRoute: RoutesType |undefined = layoutConfig.routes
+          .find(r => r.path.includes('logout'))
+          logoutRoute!.label = authUser;
+          return layoutConfig.routes.filter(r => (!authUser && !r.flAuth) ||
+          (authUser.includes('admin') && r.flAdmin) ||
+          (authUser && r.flAuth && !r.flAdmin))
+      }
+      setRoutes(getRoutes());
+  }, [authUser]);
   useEffect(() => {
-    function getRoutes(): RoutesType[] {
-      const logoutRoute: RoutesType | undefined = layoutConfig.routes.find(r => r.path.includes('logout'))
-      logoutRoute!.label = authUser;
-      return layoutConfig.routes.filter(r => (!authUser && !r.flAuth) || 
-      (authUser.includes('admin') && r.flAdmin) ||
-      (!!authUser && r.flAuth && !r.flAdmin))
-    }
-    setRoutes(getRoutes());
-  }, [authUser])
-  return <BrowserRouter>
-  <Routes>
-  <Route path='/' element={<NavigatorDispatch 
-           routes={routes} />}>
-          <Route index element={<Employees/>}/>
-          <Route path='add' element={<AddEmployee/>}/>
-          <Route path='generation' element={<Generation/>}/>
-          <Route path='statistics/age' element={<AgeStatistics/>}/>
-          <Route path='statistics/salary' element={<SalaryStatistics/>}/>
-          <Route path='/login' element={<Login/>} />
-          <Route path='/logout' element={<Logout/>} />
-      </Route>
-          
-  </Routes>
+      dispatch(employeesActions.getEmployees());
+  },[])
+return <BrowserRouter>
+    <Routes>
+        <Route path='/' element={<NavigatorDispatch 
+         routes={routes}  />}>
+            <Route index element={<Employees/>}/>
+            <Route path='add' element={<AddEmployee/>}/>
+            <Route path='statistics/age' element={<AgeStatistics/>}/>
+            <Route path='statistics/salary' element={<SalaryStatistics/>}/>
+            <Route path='login' element={<Login/>}/>
+            <Route path='logout' element={<Logout/>}/>
+            <Route path='generation' element={<Generation/>}/>
+            
+        </Route>
+            
+    </Routes>
 </BrowserRouter>
-  }
 
+}
 export default App;
