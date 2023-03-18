@@ -1,73 +1,80 @@
-import { useSelect } from "@mui/base";
-import { IconButton, List, ListItem } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { ReactNode } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Employee } from "../../models/Employee";
-import {GridActionsCellItem, GridColumns} from '@mui/x-data-grid'
-import { DataGrid } from "@mui/x-data-grid/DataGrid";
-import { Delete, Edit, PersonAdd } from "@mui/icons-material";
-import { employeeActions } from "../../redux/employeesSlice";
-import { EmployeeForm } from "../forms/EmployeeForm";
-import { Confirmation } from "./Confirmation";
-
+import React, { ReactNode, useRef, useState } from 'react';
+import { Box, IconButton,Alert } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { Employee } from '../../models/Employee';
+import { DataGrid, GridActionsCellItem, GridColumns } from '@mui/x-data-grid';
+import { Delete, Edit, PersonAdd } from '@mui/icons-material';
+import './table.css'
+import { employeesActions } from '../../redux/employeesSlice';
+import { EmployeeForm } from '../forms/EmployeeForm';
+import { Confirmation } from '../pages/Confirmation';
+import { CodeType } from '../../models/CodeType';
+import { codeActions } from '../../redux/codeSlice';
 export const Employees: React.FC = () => {
-    const authUser = useSelector<any, string>(state => state.auth.authenticated)
     const dispatch = useDispatch();
-    const editId = React.useRef<number>(0);
-    const title = React.useRef<string>('');
-    const content = React.useRef<string>('');
-    const confirmFn = React.useRef<(isOk: boolean) => void>((isOk) => {});
-    const idRemoved = React.useRef<number>(0);
-    const employeeUpdate = React.useRef<Employee>();
+    const authUser = useSelector<any, string>(state => state.auth.authenticated);
+    const editId = useRef<number>(0);
     const columns = React.useRef<GridColumns>([
-    {field: 'name', headerClassName: 'header', headerName: 'Employee Name',
-    flex: 1, headerAlign: 'center', align: 'center'},
-    {field: 'birthDate', headerClassName: 'header', headerName: 'Birth Date',
-    flex: 1, headerAlign: 'center', align: 'center'},
-    {field: 'department', headerClassName: 'header', headerName: 'Department',
-    flex: 1, headerAlign: 'center', align: 'center'},
-    {field: 'salary', headerClassName: 'header', headerName: 'Salary',
-    flex: 1, headerAlign: 'center', align: 'center'},
-    {field: 'actions', type: 'actions', getActions: (params) => {
-        return authUser.includes('admin') ? [
-            <GridActionsCellItem label="remove" icon={<Delete />}
-            onClick={() => removeEmployee(+params.id)
+        {
+            field: 'name', headerClassName: 'header', headerName: 'Employee Name',
+            flex: 1, headerAlign: 'center', align: 'center'
+        },
+        {
+            field: 'birthDate', headerName: 'Date of Birth', flex: 1, headerClassName: 'header',
+            type: "date", headerAlign: 'center', align: 'center'
+        },
+        {
+            field: 'department', headerName: 'Department', headerClassName: 'header',
+            flex: 1, headerAlign: 'center', align: 'center'
+        },
+        {
+            field: 'salary', headerName: "Salary (NIS)", headerClassName: 'header',
+            flex: 0.7, type: "number", headerAlign: 'center', align: 'center'
+        },
+        {
+            field: 'actions', type: "actions", getActions: (params) => {
+                return authUser.includes('admin') ? [
+                    <GridActionsCellItem label="remove" icon={<Delete />}
+                        onClick={() => removeEmployee(+params.id)
+                            } />,
+                    <GridActionsCellItem label="update" icon={<Edit />}
+                        onClick={() => {
+                            editId.current = +params.id;
+                            setFlEdit(true)
+                        }
+                        } />
+                ] : [];
+            }
+        }
 
-         } />,
-            <GridActionsCellItem label="update" icon={<Edit/>}
-                onClick={() =>
-                   {
-                    editId.current = +params.id;
-                    setFlEdit(true);
-                   }
-                    }/>    
-       ] : [];
-    }}
     ])
-    const [flAdd, setFlAdd] = React.useState<boolean>(false);
-    const [flEdit, setFlEdit] = React.useState<boolean>(false);
-    const [open, setOpen] = React.useState<boolean>(false);
-
+    const [flEdit, setFlEdit] = useState<boolean>(false);
+    const [flAdd, setFlAdd] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const title = useRef<string>("");
+    const content = useRef<string>("");
+    const confirmFn = useRef<(isOk: boolean)=>void>((isOK)=> {});
     const employees = useSelector<any, Employee[]>(state => state.company.employees);
+    const idRemoved = useRef<number>(0);
+    const code: CodeType = useSelector<any, CodeType>(state=>state.errorCode.code );
+    const employeeToUpdate = useRef<Employee>();
     function removeEmployee(id: number) {
         title.current = "Remove Employee object?";
         const employee = employees.find(empl => empl.id == id);
         content.current = `You are going remove employee with id ${employee?.name}`;
         idRemoved.current = id;
         confirmFn.current = actualRemove;
-        setOpen(true);   
-
+        setOpen(true);
     }
     function actualRemove(isOk: boolean) {
-        if(isOk) {
-            dispatch(employeeActions.removeEmployee(idRemoved.current));
+        if (isOk) {
+            dispatch(employeesActions.removeEmployee(idRemoved.current))
         }
         setOpen(false);
     }
     function actualUpdate(isOk: boolean) {
-        if (isOk) {
-            dispatch(employeeActions.removeEmployee(employeeUpdate.current))
+        if(isOk) {
+            dispatch(employeesActions.updateEmployee(employeeToUpdate.current));
         }
         setOpen(false);
     }
@@ -76,12 +83,15 @@ export const Employees: React.FC = () => {
                 <DataGrid columns={columns.current} rows={employees}/>
                 {authUser.includes("admin") && <IconButton onClick={() => setFlAdd(true)}><PersonAdd/></IconButton>}
         </Box>
-        if (flEdit) {
+        if (code == "Authorization error") {
+            res = <Alert severity='error'
+             onClose={() => dispatch(codeActions.setCode("OK"))}>Authorization Error, contact admin</Alert>
+        } else if (flEdit) {
             res = <EmployeeForm submitFn={function (empl: Employee): boolean {
                 
                 title.current = "Update Employee object?";
                 content.current = `You are going update Employee ${empl.name}`;
-                employeeUpdate.current = empl;
+                employeeToUpdate.current = empl;
                 confirmFn.current = actualUpdate;
                 setOpen(true);
                 setFlEdit(false);
@@ -89,16 +99,20 @@ export const Employees: React.FC = () => {
             } } employeeUpdate = {employees.find(empl => empl.id == editId.current)} />
         } else if (flAdd) {
             res = <EmployeeForm submitFn={function (empl: Employee): boolean {
-                dispatch(employeeActions.addEmployee(empl));
+                dispatch(employeesActions.addEmployee(empl));
                 setFlAdd(false);
                 return true;
             } }/>
+        }else if (code == "Unknown Error") {
+            res = <Alert severity='error'
+             onClose={() => dispatch(codeActions.setCode("OK"))}>Unknown Error</Alert>
         }
         return res;
     }
-    return <Box sx={{height: "80vh", width: "80vw"}}>
+    return <Box sx={{ height: "80vh", width: "80vw" }}>
         {getComponent()}
-        <Confirmation title={title.current} content={content.current} 
-        confirmFn={confirmFn.current} open={open}></Confirmation>
+        <Confirmation confirmFn={confirmFn.current} open={open}
+         title={title.current} content={content.current}></Confirmation>
+         
     </Box>
 }

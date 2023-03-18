@@ -11,7 +11,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { LoginData } from '../../models/LoginData';
-import { Alert } from '@mui/material';
+import { Alert, Divider } from '@mui/material';
+import { CodeType } from '../../models/CodeType';
 
 function Copyright(props: any) {
   return (
@@ -26,19 +27,19 @@ function Copyright(props: any) {
   );
 }
 type Props = {
-  submitFn: (loginData: LoginData)=>string
+  submitFn: (loginData: LoginData)=>void;
+  code: CodeType;
 };
 const theme = createTheme();
 
-export const LoginForm: React.FC<Props> = ({submitFn}) => {
+export const LoginForm: React.FC<Props> = ({submitFn, code}) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const loginData: LoginData = {username: data.get("username") as string,
   password: data.get("password") as string}
-  setMessage(submitFn(loginData));
+  submitFn(loginData);
   };
-  const [message, setMessage] = React.useState('');
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -90,11 +91,21 @@ export const LoginForm: React.FC<Props> = ({submitFn}) => {
             <Grid container>
              
               <Grid item>
-              {message && <Alert severity='error' onClose={() => setMessage('')}>{message}</Alert>}
+              {code == 'Credentials Error' && <Alert severity='error'>{code}, enter another credentials</Alert>}
               </Grid>
             </Grid>
           </Box>
+          <Divider sx={{ width: "100%", fontWeight: "bold"}}>or</Divider>
+          <Button 
+           onClick={() =>
+            submitFn({ username: 'GOOGLE', password: '' })} fullWidth variant="outlined" 
+            sx={{mt: 2}}
+             >
+
+            <Avatar src="https://img.icons8.com/color/2x/google-logo.png" sx={{width:{xs: '6vh', sm: '6vw', lg: '3vw'}}}  />
+        </Button>
         </Box>
+        
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
       

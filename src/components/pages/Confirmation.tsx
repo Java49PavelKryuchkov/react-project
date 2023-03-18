@@ -1,7 +1,7 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Box } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { employeeActions } from "../../redux/employeesSlice";
+import { employeesActions } from "../../redux/employeesSlice";
 type ConfirmProps = {
     title: string,
     content: string,

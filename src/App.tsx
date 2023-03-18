@@ -15,6 +15,10 @@ import { NavigatorProps } from './models/NavigatorProps';
 import { Generation } from './components/pages/Generation';
 import { NavigatorDispatch } from './components/navigators/NavigatorDispatch';
 import { employeesActions } from './redux/employeesSlice';
+import { Subscription } from 'rxjs';
+import { company, setEmployee} from './redux/employeesSlice';
+import { codeActions } from './redux/codeSlice';
+import { Employee } from './models/Employee';
 
 function App() {
   const dispatch = useDispatch<any>();
@@ -32,8 +36,23 @@ function App() {
       setRoutes(getRoutes());
   }, [authUser]);
   useEffect(() => {
-      dispatch(employeesActions.getEmployees());
-  },[])
+    let subscription: Subscription;
+    if(authUser) {
+         subscription = company.getAllEmployees().subscribe({
+            next: (employees: Employee[]) => {
+                dispatch(setEmployee(employees));
+            },
+            error: (err: any) => {
+                dispatch(codeActions.setCode("Unknown Error"))
+            }
+         })
+    }
+    return () => {
+        subscription && subscription.unsubscribe();
+        console.log("unsubscribing");
+    };
+  
+},[authUser])   
 return <BrowserRouter>
     <Routes>
         <Route path='/' element={<NavigatorDispatch 
